@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome to the wine app</h1>
+{% for wine in wines %}
+<div><p><h3><a href="/wine/{{wine.id}}">{{wine.name}} - {{wine.year}}&nbsp;&nbsp; <i>{{wine.variety}}</i></a></h3></p></div>
+<a href="{{url_for('index')}}">Home</a>
+{% endfor %}
+{% endblock %}

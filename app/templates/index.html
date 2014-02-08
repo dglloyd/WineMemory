@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block page_content %}
+<h1>Welcome to the wine app</h1>
+<div class="row">
+    <div class="col-sm-4">
+        <ul class="list-group">
+            {% for wine in wines %}
+            <li class="list-group-item"><a href="{{url_for('wine', id=wine.id)}}"><b>{{wine.name}}</b> - {{wine.year}}  <i>{{wine.variety}}</i></a>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

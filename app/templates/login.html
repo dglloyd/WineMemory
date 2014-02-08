@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block page_content %}
+<div class="page-header">
+    <h1>Sign In</h1>
+</div>
+{{ wtf.quick_form(form, extra_classes="form-signin", form_type='horizontal', horizontal_columns=('sm',2,2)) }}
+{% endblock %}
+
