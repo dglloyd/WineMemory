@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import TextField, BooleanField, HiddenField, ValidationError, RadioField, SubmitField, PasswordField, TextAreaField
+from wtforms import TextField, BooleanField, HiddenField, ValidationError, RadioField, SubmitField, PasswordField, TextAreaField, DecimalField
 from wtforms.validators import Required
 
 class LoginForm(Form):
@@ -23,11 +23,13 @@ class WineForm(Form):
     country = TextField('Country')
     description = TextAreaField('Description')
     notes = TextAreaField('Notes')
-    price = TextField('Price (Optional)')
+    price = DecimalField('Price (Optional)')
     store = TextField('Store (Optional)')
+    drank = BooleanField('Already Drank') 
     submit_button = SubmitField('Submit Form')
 
 class PurchaseForm(Form):
     price = TextField('Price')
     store = TextField('Store')
+    drank = BooleanField('Drank') 
     submit_button = SubmitField('Submit')

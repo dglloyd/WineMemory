@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block page_content %}
+<div class="container">
+    <h1>Wine list</h1>
+</div>
+<br>
+<div class="container">
+    <div class="col-sm-4">
+        <div class="panel panel-default">
+            {% for group in wines|groupby('variety') %}
+            <div class="panel-heading">
+                <h3 class="panel-title">{{group.grouper}}</h3>
+            </div>
+            <div class="panel panel-body">
+                {% for wine in group.list %}
+                <a href="{{url_for('wine', id=wine.id)}}"><b>{{wine.name}}</b> - {{wine.year}} {{wine.count}}</a>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<br>
+<div class="container">
+    <a href="{{url_for('wine_new')}}" class="btn btn-primary">New Entry</a>
+</div>
+{% endblock %}

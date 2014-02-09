@@ -1,5 +1,30 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% block scripts %}
+{{ super() }}
+<script>
+    $(function() {
+        $("#store").autocomplete({
+            source: function( request, response ) {
+                $.getJSON("/autocomplete/store", {
+                    search: request
+                }, response);
+            }
+        })
+    });
+</script>
+<script>
+    $(function() {
+        $("#variety").autocomplete({
+            source: function( request, response ) {
+                $.getJSON("/autocomplete/variety", {
+                    search: request
+                }, response);
+            }
+        })
+    });
+</script>
+{%endblock%}
 {% block page_content %}
 <h1>Wine Entry</h1>
 {{ wtf.quick_form(form, form_type='horizontal', horizontal_columns=('sm',2,4)) }}

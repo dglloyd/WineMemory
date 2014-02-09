@@ -18,7 +18,7 @@ class Wine(db.Model):
     entered_by = db.Column(db.Integer, db.ForeignKey('user.id'))
     description = db.Column(db.Text)
     notes = db.Column(db.Text)
-    purchases = db.relationship("Purchase", backref = db.backref('purchases', order_by=id))
+    purchases = db.relationship("Purchase", backref = db.backref('purchases', order_by="Purchase.drank"), cascade="all, delete, delete-orphan")
     def __repr__(self):
         return '<Wine %r>' % (self.name)
 
@@ -27,6 +27,7 @@ class Purchase(db.Model):
     price = db.Column('price',db.Numeric(precision=2))
     store = db.Column('store',db.String())
     wine_id = db.Column(db.Integer, db.ForeignKey('wine.id'))
-    wine = db.relationship("Wine", backref=db.backref('wine', order_by=id))
+    drank = db.Column(db.Boolean)
+    wine = db.relationship("Wine", backref=db.backref('wine', order_by=drank))
     def __repr__(self):
-        return '<Purchase %r>' % (self.name)
+        return '<Purchase %r>' % (self.id)

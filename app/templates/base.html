@@ -1,14 +1,19 @@
 {% extends "bootstrap/base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% import "bootstrap/fixes.html" as fixes %}
+{% block scripts %}
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+{%endblock%}
 {% block head %}
 <title>{{ title }}</title>
 {{super()}}
 {{fixes.ie8()}}
+<link href="/static/autocomplete.css" rel="stylesheet">
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
 {% endblock %}
 {% block content %}
-<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<div class="navbar navbar-inverse navbar-static-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -39,14 +44,15 @@
         </div><!--/.nav-collapse -->
     </div>
 </div>
-<div class="alert alert-info">
-    {% with messages = get_flashed_messages() %}
+<div class="clearfix"></div>
+<div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-    <ul>
-        {% for message in messages %}
-        <li>{{ message }} </li>
-        {% endfor %}
-    </ul>
+    {% for category, message in messages %}
+    <div class="alert alert-{{category}}">
+        {{ message }}
+    </div>
+    {% endfor %}
     {% endif %}
     {% endwith %}
 </div>

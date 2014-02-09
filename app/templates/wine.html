@@ -3,7 +3,7 @@
 {% for wine in wines %}
 <h2>{{wine.name}} - {{wine.year}}&nbsp;<i>{{wine.variety}}</i></h2>
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-7">
         <ul class="list-group">
             <p>
             <b class="list-group-item-heading">Name:</b>
@@ -32,20 +32,29 @@
             <p>
             <b class="list-group-item-heading">Purchases:</b><br>
             <div class="list-group-item-text">
-                {% for purchase in wine.purchases %}
                 <table class="table table-bordered table-striped">
                     <tr>
                         <th>Store:</th>
                         <th>Price:</th>
+                        <th>Drank:</th>
                         <th>Action:</th>
+                    </tr>
+                {% for purchase in wine.purchases|sort(attribute='drank',reverse=True) %}
                     <tr>
                         <td>{{ purchase.store }}</td>
                         <td>{{ "$%.2f"|format(purchase.price) }}</td>
-                        <td><a href="{{ url_for('wine_purchase_edit', id = purchase.id) }}" class="btn btn-default"><i class="fa fa-pencil"></i></a>
-                        <a href="{{ url_for('wine_purchase_delete', id = purchase.id) }}" class="btn btn-default">&times;</a></td>
+                        <td>{% if purchase.drank %}True{%else%}False{%endif%}</td>
+                        <td> <a href="{{ url_for('wine_purchase_drink', id = purchase.id) }}" class="btn btn-default">
+                                <i class="fa {% if purchase.drank %}fa-undo{%else%}fa-glass{%endif%}"><span class="sr-only">Drink</span></i></a>
+                            <a href="{{ url_for('wine_purchase_edit', id = purchase.id) }}" class="btn btn-default">
+                                <i class="fa fa-pencil"><span class="sr-only">Edit</span></i></a>
+                            <a href="{{ url_for('wine_purchase_dupe', id = purchase.id) }}" class="btn btn-default">
+                                <i class="fa fa-plus"><span class="sr-only">Duplicate</span></i></a>
+                            <a href="{{ url_for('wine_purchase_delete', id = purchase.id) }}" class="btn btn-default">
+                                <i class="fa fa-times"><span class="sr-only">Delete</span></i></a></td>
                     </tr>
-                </table>
                 {% endfor %}
+                </table>
             </div>
             </p>
         </ul>
