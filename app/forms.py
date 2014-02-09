@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import TextField, BooleanField, HiddenField, ValidationError, RadioField, SubmitField, PasswordField
+from wtforms import TextField, BooleanField, HiddenField, ValidationError, RadioField, SubmitField, PasswordField, TextAreaField
 from wtforms.validators import Required
 
 class LoginForm(Form):
@@ -7,10 +7,27 @@ class LoginForm(Form):
     password = PasswordField('Password', validators = [Required()])
     submit_button = SubmitField('Login')
 
+class WineEditForm(Form):
+    name = TextField('Name', validators = [Required()])
+    variety = TextField('Variety', validators = [Required()])
+    year = TextField('Year', validators = [Required()])
+    country = TextField('Country')
+    description = TextAreaField('Description')
+    notes = TextAreaField('Notes')
+    submit_button = SubmitField('Submit Form')
+
 class WineForm(Form):
     name = TextField('Name', validators = [Required()])
     variety = TextField('Variety', validators = [Required()])
     year = TextField('Year', validators = [Required()])
     country = TextField('Country')
-    price = TextField('Price')
+    description = TextAreaField('Description')
+    notes = TextAreaField('Notes')
+    price = TextField('Price (Optional)')
+    store = TextField('Store (Optional)')
     submit_button = SubmitField('Submit Form')
+
+class PurchaseForm(Form):
+    price = TextField('Price')
+    store = TextField('Store')
+    submit_button = SubmitField('Submit')

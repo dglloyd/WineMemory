@@ -1,8 +1,59 @@
 {% extends "base.html" %}
-{% block content %}
-<h1>Welcome to the wine app</h1>
+{% block page_content %}
 {% for wine in wines %}
-<div><p><h3><a href="/wine/{{wine.id}}">{{wine.name}} - {{wine.year}}&nbsp;&nbsp; <i>{{wine.variety}}</i></a></h3></p></div>
-<a href="{{url_for('index')}}">Home</a>
+<h2>{{wine.name}} - {{wine.year}}&nbsp;<i>{{wine.variety}}</i></h2>
+<div class="row">
+    <div class="col-md-4">
+        <ul class="list-group">
+            <p>
+            <b class="list-group-item-heading">Name:</b>
+            <span class="list-group-item-text">{{wine.name}}</span>
+            </p>
+            <p>
+            <b class="list-group-item-heading">Year:</b>
+            <span class="list-group-item-text">{{wine.year}}</span>
+            </p>
+            <p>
+            <b class="list-group-item-heading">Variety:</b>
+            <span class="list-group-item-text">{{wine.variety}}</span>
+            </p>
+            <p>
+            <b class="list-group-item-heading">Country:</b>
+            <span class="list-group-item-text">{{wine.country}}</span>
+            </p>
+            <p>
+            <b class="list-group-item-heading">Description:</b><br>
+            <span class="list-group-item-text">{{wine.description}}</span>
+            </p>
+            <p>
+            <b class="list-group-item-heading">Notes:</b><br>
+            <span class="list-group-item-text">{{wine.notes}}</span>
+            </p>
+            <p>
+            <b class="list-group-item-heading">Purchases:</b><br>
+            <div class="list-group-item-text">
+                {% for purchase in wine.purchases %}
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th>Store:</th>
+                        <th>Price:</th>
+                        <th>Action:</th>
+                    <tr>
+                        <td>{{ purchase.store }}</td>
+                        <td>{{ "$%.2f"|format(purchase.price) }}</td>
+                        <td><a href="{{ url_for('wine_purchase_edit', id = purchase.id) }}" class="btn btn-default"><i class="fa fa-pencil"></i></a>
+                        <a href="{{ url_for('wine_purchase_delete', id = purchase.id) }}" class="btn btn-default">&times;</a></td>
+                    </tr>
+                </table>
+                {% endfor %}
+            </div>
+            </p>
+        </ul>
+    </div>
+</div>
+
+
+<a href="{{url_for('wine_edit',id=wine.id)}}" role="button" class="btn btn-primary">Edit Wine</a>
+<a href="{{url_for('wine_purchase', id = wine.id)}}" role="button" class="btn btn-primary">New Purchase</a>
 {% endfor %}
 {% endblock %}

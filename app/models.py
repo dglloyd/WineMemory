@@ -16,6 +16,17 @@ class Wine(db.Model):
     country = db.Column('country', db.String(50))
     date_entered = db.Column('date_entered', db.DateTime)
     entered_by = db.Column(db.Integer, db.ForeignKey('user.id'))
-    price = db.Column('price',db.Numeric(precision=2))
+    description = db.Column(db.Text)
+    notes = db.Column(db.Text)
+    purchases = db.relationship("Purchase", backref = db.backref('purchases', order_by=id))
     def __repr__(self):
         return '<Wine %r>' % (self.name)
+
+class Purchase(db.Model):
+    id = db.Column('id', db.Integer, primary_key=True)
+    price = db.Column('price',db.Numeric(precision=2))
+    store = db.Column('store',db.String())
+    wine_id = db.Column(db.Integer, db.ForeignKey('wine.id'))
+    wine = db.relationship("Wine", backref=db.backref('wine', order_by=id))
+    def __repr__(self):
+        return '<Purchase %r>' % (self.name)
