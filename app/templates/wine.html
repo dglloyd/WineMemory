@@ -39,7 +39,7 @@
                         <th>Drank:</th>
                         <th>Action:</th>
                     </tr>
-                {% for purchase in wine.purchases|sort(attribute='drank',reverse=True) %}
+                {% for purchase in wine.purchases|sort(attribute='drank') %}
                     <tr>
                         <td>{{ purchase.store }}</td>
                         <td>{{ "$%.2f"|format(purchase.price) }}</td>
