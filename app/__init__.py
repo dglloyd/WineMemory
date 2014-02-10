@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask.ext.sqlalchemy import SQLAlchemy
+import psycopg2
 
 app = Flask(__name__)
 Bootstrap(app)

@@ -175,7 +175,8 @@ def autocomplete_store():
     print search
     for store in Purchase.query.filter(Purchase.store.like(search + '%')).all():
         results.append(store.store)
-        return Response(json.dumps(list(set(results))),  mimetype='application/json')
+
+    return Response(json.dumps(list(set(results))),  mimetype='application/json')
 
 
 @app.route('/autocomplete/variety/')
@@ -186,7 +187,12 @@ def autocomplete_variety():
     print search
     for wine in Wine.query.filter(Wine.variety.like(search + '%')).all():
         results.append(wine.variety)
+
+    results = list(set(results))
+    if results:
         return Response(json.dumps(list(set(results))),  mimetype='application/json')
+    return json.dumps([])
+
 
 
 @app.route('/wine/purchase/dupe/<id>')
@@ -220,21 +226,22 @@ def wine_purchase_drink(id):
         g.purchase.drank = False
     else:
         g.purchase.drank = True
-        db.session.add(g.purchase)
-        db.session.commit()
-        flash('Purchase for '+wine.name+' marked as '+ ('drank' if g.purchase.drank else 'not drank'),'success')
-        return redirect(url_for('wine',id=wine.id))
+
+    db.session.add(g.purchase)
+    db.session.commit()
+    flash('Purchase for '+wine.name+' marked as '+ ('drank' if g.purchase.drank else 'not drank'),'success')
+    return redirect(url_for('wine',id=wine.id))
 
 @app.route('/cellar/list')
 def cellar_list():
     wines = Wine()
     counted_list = []
-    wines = db.session.query(Wine, db.func.count(Wine.id)).outerjoin(Purchase).group_by(Wine.id) 
-# Fix this, i hate it, why doesn't the ORM let me get count cleanly.
+    wines = db.session.query(Wine, db.func.count(Wine.id)).outerjoin(Purchase).filter(Purchase.drank == False).group_by(Wine.id) 
+    # Fix this, i hate it, why doesn't the ORM let me get count cleanly.
     for wine, count in wines:
         wine.count = count
         counted_list.append(wine)
-    return render_template("cellar.html",
-                           title = "Cellar Listing",
-                           wines = counted_list,
-                           page = 'cellar')
+        return render_template("cellar.html",
+                               title = "Cellar Listing",
+                               wines = counted_list,
+                               page = 'cellar')
