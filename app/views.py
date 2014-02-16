@@ -173,7 +173,7 @@ def autocomplete_store():
     results = []
     search = request.args.get('search[term]')
     print search
-    for store in Purchase.query.filter(Purchase.store.like(search + '%')).all():
+    for store in Purchase.query.filter(Purchase.store.ilike(search + '%')).all():
         results.append(store.store)
 
     return Response(json.dumps(list(set(results))),  mimetype='application/json')
@@ -185,7 +185,7 @@ def autocomplete_variety():
     results = []
     search = request.args.get('search[term]')
     print search
-    for wine in Wine.query.filter(Wine.variety.like(search + '%')).all():
+    for wine in Wine.query.filter(Wine.variety.ilike(search + '%')).all():
         results.append(wine.variety)
 
     results = list(set(results))
