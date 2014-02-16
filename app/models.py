@@ -19,8 +19,17 @@ class Wine(db.Model):
     description = db.Column(db.Text)
     notes = db.Column(db.Text)
     purchases = db.relationship("Purchase", backref = db.backref('purchases', order_by="Purchase.drank"), cascade="all, delete, delete-orphan")
+    ratings = db.relationship("WineRating", backref = db.backref('ratings', order_by="WineRating.rating"), cascade="all, delete, delete-orphan")
     def __repr__(self):
         return '<Wine %r>' % (self.name)
+
+class WineRating(db.Model):
+    id = db.Column('id', db.Integer, primary_key=True)
+    rating = db.Column('rating', db.Integer)
+    wine_id = db.Column(db.Integer, db.ForeignKey('wine.id'))
+    wine = db.relationship("Wine", backref=db.backref('wine_rating', order_by=rating))
+    def __repr__(self):
+        return '<WineRating %r>' % (self.id)
 
 class Purchase(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)

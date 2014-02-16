@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, g, url_for, session, request, jsonify, Response
 from app import app, db
 from forms import LoginForm, WineForm, PurchaseForm, WineEditForm
-from models import User, Wine, Purchase
+from models import User, Wine, Purchase, WineRating
 from datetime import datetime
 from flask.ext.sqlalchemy import SQLAlchemy
 import json
@@ -34,6 +34,7 @@ def wine_new():
         date = datetime.now()
         g.wine = Wine()
         g.purchase = Purchase()
+        g.rating= WineRating()
         g.wine.name = form.name.data
         g.wine.variety = form.variety.data
         g.wine.year = form.year.data
@@ -49,6 +50,11 @@ def wine_new():
         g.purchase.drank = form.drank.data
         db.session.add(g.purchase)
         db.session.commit()
+        g.rating.wine_id = g.wine.id
+        g.rating.rating = form.rating.data
+        db.session.add(g.rating)
+        db.session.commit()
+
         flash('Wine Added', 'success')
         return redirect('/index')
     return render_template('wine_form.html',

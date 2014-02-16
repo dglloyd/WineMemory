@@ -26,6 +26,7 @@ class WineForm(Form):
     price = DecimalField('Price (Optional)')
     store = TextField('Store (Optional)')
     drank = BooleanField('Already Drank') 
+    rating = TextField('Rating')
     submit_button = SubmitField('Submit Form')
 
 class PurchaseForm(Form):
@@ -33,3 +34,6 @@ class PurchaseForm(Form):
     store = TextField('Store')
     drank = BooleanField('Drank') 
     submit_button = SubmitField('Submit')
+
+class RatingForm(Form):
+    rating = TextField('Rating')

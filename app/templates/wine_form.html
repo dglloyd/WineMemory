@@ -12,8 +12,6 @@
             }
         })
     });
-</script>
-<script>
     $(function() {
         $("#variety").autocomplete({
             source: function( request, response ) {
@@ -22,6 +20,9 @@
                 }, response);
             }
         })
+    });
+    $(function() {
+        $('#rating').rating();
     });
 </script>
 {%endblock%}
