@@ -8,6 +8,7 @@ Bitching only allowed in form of pull request.
 Requirements
 ------------
 - Flask
+- Flask-Bcrypt
 - Flask-Bootstrap
 - Flask-Migrate
 - Flask-Script
