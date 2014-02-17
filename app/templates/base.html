@@ -30,6 +30,8 @@
             <ul class="nav navbar-nav">
                 <li class="{% if page == 'index' %}active{%endif%}"><a href="/">List</a></li>
                 <li class="{% if page == 'wine_new' %}active{%endif%}"><a href="{{url_for('wine_new')}}">New</a></li>
+                <li class="{% if page == 'login' %}active{%endif%}"><a href="{{url_for('login')}}">Login</a></li>
+                <li class="{% if page == 'register' %}active{%endif%}"><a href="{{url_for('register')}}">Register</a></li>
             </ul>
         </div><!--/.nav-collapse -->
     </div>

@@ -1,11 +1,17 @@
 from flask.ext.wtf import Form
 from wtforms import TextField, BooleanField, HiddenField, ValidationError, RadioField, SubmitField, PasswordField, TextAreaField, DecimalField
-from wtforms.validators import Required
+from wtforms.validators import Required, Email
 
 class LoginForm(Form):
-    username = TextField('User Name', validators = [Required()])
+    name = TextField('User Name', validators = [Required()])
     password = PasswordField('Password', validators = [Required()])
     submit_button = SubmitField('Login')
+
+class RegisterForm(Form):
+    name = TextField('User Name', validators = [Required()])
+    password = PasswordField('Password', validators = [Required()])
+    email = TextField("Email Address", validators = [Email()])
+    submit_button = SubmitField('Register')
 
 class WineEditForm(Form):
     name = TextField('Name', validators = [Required()])

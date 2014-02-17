@@ -4,7 +4,10 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(64), index = True, unique = True)
     email = db.Column(db.String(120), index = True, unique = True)
+    password = db.Column(db.String(60), index = True)
     wines = db.relationship('Wine', backref = 'author', lazy = 'dynamic')
+    purchases = db.relationship('Purchase', backref = 'user_purchases', lazy = 'dynamic')
+    ratings = db.relationship('WineRating', backref = 'user_ratings', lazy = 'dynamic')
     def __repr__(self):
         return '<User %r>' % (self.name)
 
@@ -26,6 +29,8 @@ class Wine(db.Model):
 class WineRating(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
     rating = db.Column('rating', db.Integer, default=0)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship("User", backref=db.backref('owner'))
     wine_id = db.Column(db.Integer, db.ForeignKey('wine.id'))
     wine = db.relationship("Wine", backref=db.backref('wine_rating', order_by=rating))
     def __repr__(self):
@@ -33,10 +38,13 @@ class WineRating(db.Model):
 
 class Purchase(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
+    user_id = db.Column('user_id', db.Integer)
     price = db.Column('price',db.Numeric(precision=2))
     store = db.Column('store',db.String())
     wine_id = db.Column(db.Integer, db.ForeignKey('wine.id'))
     drank = db.Column(db.Boolean)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship("User", backref=db.backref('user'))
     wine = db.relationship("Wine", backref=db.backref('wine', order_by=drank))
     def __repr__(self):
         return '<Purchase %r>' % (self.id)

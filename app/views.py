@@ -1,9 +1,10 @@
 from flask import render_template, flash, redirect, g, url_for, session, request, jsonify, Response
-from app import app, db
-from forms import LoginForm, WineForm, PurchaseForm, WineEditForm
+from app import app, db, bcrypt
+from forms import LoginForm, WineForm, PurchaseForm, WineEditForm, RegisterForm
 from models import User, Wine, Purchase, WineRating
 from datetime import datetime
 from flask.ext.sqlalchemy import SQLAlchemy
+from flaskext.bcrypt import Bcrypt
 import json
 
 @app.route('/')
@@ -19,8 +20,17 @@ def index():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        flash('Login requested for OpenID="' + form.openid.data + '", remember_me=' + str(form.remember_me.data),'success')
-        return redirect(url_for('index'))
+        g.user =  User.query.filter_by(name = form.name.data).first()
+        if g.user:
+            if bcrypt.check_password_hash(g.user.password,form.password.data):
+                flash("Logged In","success")
+                return redirect(url_for('index'))
+            else:
+                flash("Incorrect username or password", "danger")
+                return redirect(url_for('login'))
+        else:
+            flash("Incorrect username or password", "danger")
+            return redirect(url_for('login'))
     return render_template('login.html',
                            title = 'Sign In',
                            page = 'login',
@@ -251,3 +261,20 @@ def cellar_list():
                                title = "Cellar Listing",
                                wines = counted_list,
                                page = 'cellar')
+
+@app.route('/user/new', methods = ['GET','POST'])
+def register():
+    form = RegisterForm()
+    g.user = User()
+    if form.validate_on_submit():
+        g.user.name = form.name.data
+        g.user.password = bcrypt.generate_password_hash(form.password.data)
+        g.user.email = form.email.data
+        db.session.add(g.user)
+        db.session.commit()
+        flash("Successfully registered","success")
+        return redirect(url_for("index"))
+    return render_template("register.html",
+                           form = form,
+                           title = "Register",
+                           page = 'register')
