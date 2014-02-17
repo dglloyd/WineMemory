@@ -25,7 +25,7 @@ class Wine(db.Model):
 
 class WineRating(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
-    rating = db.Column('rating', db.Integer)
+    rating = db.Column('rating', db.Integer, default=0)
     wine_id = db.Column(db.Integer, db.ForeignKey('wine.id'))
     wine = db.relationship("Wine", backref=db.backref('wine_rating', order_by=rating))
     def __repr__(self):
