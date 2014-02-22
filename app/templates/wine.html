@@ -31,7 +31,7 @@
             </p>
             <p>
             <b class="list-group-item-heading">Rating:</b>
-            <span class="list-group-item-text">{% for number in range(wine.ratings[0].rating)%}<i class='glyphicon glyphicon-star'></i>{%endfor%}{% for number in range(wine.ratings[0].rating,5)%}<i class="fa fa-star-o"></i>{%endfor%}</span>
+            <span class="list-group-item-text">{% if wine.ratings %}{% for number in range(wine.ratings[0].rating)%}<i class='glyphicon glyphicon-star'></i>{%endfor%}{% for number in range(wine.ratings[0].rating,5)%}<i class="fa fa-star-o"></i>{%endfor%}{%endif%}</span>
             </p>
             <p>
             <b class="list-group-item-heading">Purchases:</b><br>
