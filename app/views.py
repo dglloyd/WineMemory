@@ -1,20 +1,35 @@
 from flask import render_template, flash, redirect, g, url_for, session, request, jsonify, Response
+from functools import wraps
 from app import app, db, bcrypt
 from forms import LoginForm, WineForm, PurchaseForm, WineEditForm, RegisterForm
 from models import User, Wine, Purchase, WineRating
 from datetime import datetime
 from flask.ext.sqlalchemy import SQLAlchemy
 from flaskext.bcrypt import Bcrypt
+from beaker.middleware import SessionMiddleware
 import json
+
+# decoration
+def requires_authentication(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if session.has_key('user'):
+            g.user = session['user']
+        else:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated
 
 @app.route('/')
 @app.route('/index')
+@requires_authentication
 def index():
-    wine = Wine.query.all()
+    wine = Wine.query.outerjoin(Purchase).order_by(Purchase.drank == True).all()
     return render_template("index.html",
                            title = "Main Listing",
                            wines = wine,
-                           page = 'index')
+                           page = 'index',
+                           user = g.user)
 
 @app.route('/login',methods = ['GET','POST'])
 def login():
@@ -23,6 +38,7 @@ def login():
         g.user =  User.query.filter_by(name = form.name.data).first()
         if g.user:
             if bcrypt.check_password_hash(g.user.password,form.password.data):
+                session['user'] = g.user
                 flash("Logged In","success")
                 return redirect(url_for('index'))
             else:
@@ -34,10 +50,15 @@ def login():
     return render_template('login.html',
                            title = 'Sign In',
                            page = 'login',
-                           form = form)
+                           form = form)                          
 
+@app.route('/logout', methods = ['GET','POST'])
+def logout():
+    session.delete()
+    return redirect(url_for('login'))
 
 @app.route('/wine/new', methods = ['GET','POST'])
+@requires_authentication
 def wine_new():
     form = WineForm()
     if form.validate_on_submit():
@@ -70,9 +91,12 @@ def wine_new():
     return render_template('wine_form.html',
                            title = 'Add New Wine',
                            page = 'wine_new',
-                           form = form)
+                           form = form,
+                           user = g.user)
+
 
 @app.route('/wine/edit/<id>', methods = ['GET','POST'])
+@requires_authentication
 def wine_edit(id=None):
     form = WineEditForm()
     if form.validate_on_submit():
@@ -99,10 +123,12 @@ def wine_edit(id=None):
                            title = "Edit wine",
                            page = 'wine_edit',
                            action = 'edit',
-                           form = form)
+                           form = form,
+                           user = g.user)
 
 
 @app.route('/wine/show/<id>')
+@requires_authentication
 def wine(id):
     wine = Wine.query.filter_by(id = id).first()
     if wine == None:
@@ -111,9 +137,11 @@ def wine(id):
     return render_template('wine.html',
                            title = wine.name,
                            page = 'wine',
-                           wines = [wine])
+                           wines = [wine],
+                           user = g.user)
 
 @app.route('/wine/purchase/new/<id>', methods = ['GET','POST'])
+@requires_authentication
 def wine_purchase(id):
     form = PurchaseForm()
     if form.validate_on_submit():
@@ -125,7 +153,7 @@ def wine_purchase(id):
         g.purchase.drank = form.drank.data
         db.session.add(g.purchase)
         db.session.commit()
-        flash('Purchase for '+wine.name+' added','success')
+        flash('Purchase for '+g.wine.name+' added','success')
         return redirect(url_for('wine',id=id))
     if not id:
         flash('Need a wine id', 'warning')
@@ -135,9 +163,11 @@ def wine_purchase(id):
                            title = "New Purchase",
                            form = form,
                            page = 'wine_purchase',
-                           wine = wine)
+                           wine = wine,
+                           user = g.user)
 
 @app.route('/wine/delete/<id>')
+@requires_authentication
 def wine_delete(id):
     wine = Wine.query.get(id)
     if not wine:
@@ -149,6 +179,7 @@ def wine_delete(id):
     return redirect(url_for('index'))
 
 @app.route('/wine/purchase/edit/<id>', methods = ['GET','POST'])
+@requires_authentication
 def wine_purchase_edit(id=None):
     form = PurchaseForm()
     if form.validate_on_submit():
@@ -169,9 +200,11 @@ def wine_purchase_edit(id=None):
                            title = "Edit wine",
                            page = 'wine_edit',
                            action = 'edit',
-                           form = form)
+                           form = form,
+                           user = g.user)
 
 @app.route('/wine/purchase/delete/<id>')
+@requires_authentication
 def wine_purchase_delete(id):
     purchase = Purchase.query.get(id)
     if not purchase:
@@ -184,6 +217,7 @@ def wine_purchase_delete(id):
 
 
 @app.route('/autocomplete/store/')
+@requires_authentication
 def autocomplete_store():
     purchase = Purchase()
     results = []
@@ -196,6 +230,7 @@ def autocomplete_store():
 
 
 @app.route('/autocomplete/variety/')
+@requires_authentication
 def autocomplete_variety():
     wine = Wine()
     results = []
@@ -212,6 +247,7 @@ def autocomplete_variety():
 
 
 @app.route('/wine/purchase/dupe/<id>')
+@requires_authentication
 def wine_purchase_dupe(id):
     if not id:
         flash('Need a wine id', 'warning')
@@ -230,6 +266,7 @@ def wine_purchase_dupe(id):
     return redirect(url_for('wine',id=wine.id))
 
 @app.route('/wine/puchase/drink/<id>')
+@requires_authentication
 def wine_purchase_drink(id):
     if not id:
         flash('Need a wine id', 'warning')
@@ -249,6 +286,7 @@ def wine_purchase_drink(id):
     return redirect(url_for('wine',id=wine.id))
 
 @app.route('/cellar/list')
+@requires_authentication
 def cellar_list():
     wines = Wine()
     counted_list = []
