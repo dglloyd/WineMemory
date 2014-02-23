@@ -9,6 +9,7 @@ Requirements
 ------------
 - Flask
 - Flask-Bcrypt
+- Flask-Beaker
 - Flask-Bootstrap
 - Flask-Migrate
 - Flask-Script
