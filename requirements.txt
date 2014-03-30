@@ -1,0 +1,12 @@
+Flask
+Flask-bcrypt
+Flask-beaker
+Flask-Bootstrap
+Flask-Migrate
+Flask-Script
+Flask-SQLAlchemy
+Flask-WTF
+psycopg2
+SQLAlchemy
+sqlalchemy-migrate
+WTForms

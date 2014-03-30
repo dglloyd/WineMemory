@@ -17,10 +17,10 @@ class Wine(db.Model):
     variety = db.Column('variety', db.String(50))
     year = db.Column('year', db.Integer)
     country = db.Column('country', db.String(50))
+    region = db.Column('region', db.String(50))
     date_entered = db.Column('date_entered', db.DateTime)
     entered_by = db.Column(db.Integer, db.ForeignKey('user.id'))
     description = db.Column(db.Text)
-    notes = db.Column(db.Text)
     purchases = db.relationship("Purchase", backref = db.backref('purchases', order_by="Purchase.drank"), cascade="all, delete, delete-orphan")
     ratings = db.relationship("WineRating", backref = db.backref('ratings', order_by="WineRating.rating"), cascade="all, delete, delete-orphan")
     def __repr__(self):
@@ -28,11 +28,13 @@ class Wine(db.Model):
 
 class WineRating(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
-    rating = db.Column('rating', db.Integer, default=0)
+    rating = db.Column('rating', db.Integer, default=-1)
+    notes = db.Column(db.Text)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship("User", backref=db.backref('owner'))
     wine_id = db.Column(db.Integer, db.ForeignKey('wine.id'))
     wine = db.relationship("Wine", backref=db.backref('wine_rating', order_by=rating))
+    date_entered = db.Column('date_entered', db.DateTime)
     def __repr__(self):
         return '<WineRating %r>' % (self.id)
 
@@ -46,5 +48,6 @@ class Purchase(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship("User", backref=db.backref('user'))
     wine = db.relationship("Wine", backref=db.backref('wine', order_by=drank))
+    date_entered = db.Column('date_entered', db.DateTime)
     def __repr__(self):
         return '<Purchase %r>' % (self.id)

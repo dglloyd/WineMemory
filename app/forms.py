@@ -14,19 +14,19 @@ class RegisterForm(Form):
     submit_button = SubmitField('Register')
 
 class WineEditForm(Form):
-    name = TextField('Name', validators = [Required()])
+    name = TextField('Winery', validators = [Required()])
     variety = TextField('Variety', validators = [Required()])
     year = TextField('Year', validators = [Required()])
     country = TextField('Country')
     description = TextAreaField('Description')
-    notes = TextAreaField('Notes')
     submit_button = SubmitField('Submit Form')
 
 class WineForm(Form):
     name = TextField('Name', validators = [Required()])
     variety = TextField('Variety', validators = [Required()])
-    year = TextField('Year', validators = [Required()])
+    year = TextField('Year')
     country = TextField('Country')
+    region = TextField('Region')
     description = TextAreaField('Description')
     notes = TextAreaField('Notes')
     price = DecimalField('Price (Optional)')
@@ -43,3 +43,5 @@ class PurchaseForm(Form):
 
 class RatingForm(Form):
     rating = TextField('Rating')
+    notes = TextAreaField('Notes')
+

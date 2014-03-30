@@ -6,24 +6,29 @@
 <br>
 <div class="container">
     <div class="col-sm-8">
-        <ul class="list-group">
+        <table class="table">
             {% for wine in wines %}
-            <li class="list-group-item col-md-10">
-            <div class="row">
-                <div class="col-md-6"><a href="{{url_for('wine', id=wine.id)}}"><b>{{wine.name}}</b> - {{wine.year}}  <i>{{wine.variety}}</i></a>
-                </div>
-                <div class="col-md-6 text-right">
+            <tr>
+                <td>
+                    <a href="{{url_for('wine', id=wine.id)}}"><b>{{wine.name}}</b> - {{wine.year}}  <i>{{wine.variety}}</i></a>
+                </td>
+                <td>
                     <a href="{{url_for('wine_purchase', id=wine.id)}}"><button type="button" class="btn btn-xs btn-default">New Purchase</button></a>
-                    &nbsp;<a href="{{url_for('wine_edit',id=wine.id)}}"><button type="button" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></button></a>
-                    &nbsp;<a href="{{url_for('wine_delete',id=wine.id)}}"><button type="button" class="btn btn-xs btn-default"><i class="text-danger fa fa-times"></i></button></a>
-                </div>
-            </div>
+                </td>
+                <td>
+                    <a href="{{url_for('wine_edit',id=wine.id)}}"><button type="button" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></button></a>
+                </td>
+                <td>
+                    <a href="{{url_for('wine_delete',id=wine.id)}}"><button type="button" class="btn btn-xs btn-default"><i class="text-danger fa fa-times"></i></button></a>
+                </td>
+            </tr>
             {% endfor %}
-        </ul>
+        </table>
     </div>
 </div>
 <br>
 <div class="container">
-    <a href="{{url_for('wine_new')}}" class="btn btn-primary">New Entry</a>
+
+    <a href="{{url_for('wine_new')}}" class="btn btn-primary">New Wine</a>
 </div>
 {% endblock %}

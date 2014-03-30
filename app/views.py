@@ -15,16 +15,28 @@ def requires_authentication(f):
     def decorated(*args, **kwargs):
         if session.has_key('user'):
             g.user = session['user']
+            g.user.roles = "badmin"
         else:
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated
 
+def requires_authorization(*roles):
+    def decorator(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            if g.user.roles not in roles:
+                flash("Not Authorized", "danger")
+                return redirect(url_for('index'))
+            return f(*args, **kwargs)
+        return decorated
+    return decorator
+
 @app.route('/')
 @app.route('/index')
 @requires_authentication
 def index():
-    wine = Wine.query.outerjoin(Purchase).order_by(Purchase.drank == True).all()
+    wine = Wine.query.filter_by(entered_by = g.user.id).outerjoin(Purchase).order_by(Purchase.drank == True).all()
     return render_template("index.html",
                            title = "Main Listing",
                            wines = wine,
@@ -72,17 +84,21 @@ def wine_new():
         g.wine.country = form.country.data
         g.wine.date_entered = date 
         g.wine.description = form.description.data 
-        g.wine.notes = form.notes.data 
+        g.wine.entered_by = g.user.id
         db.session.add(g.wine)
-        db.session.commit()
+        #db.session.commit()
         g.purchase.wine_id = g.wine.id
         g.purchase.price = form.price.data
         g.purchase.store = form.store.data
         g.purchase.drank = form.drank.data
+        g.purchase.date_entered = date
         db.session.add(g.purchase)
-        db.session.commit()
         g.rating.wine_id = g.wine.id
+        if form.rating.data == '':
+            form.rating.data = -1
         g.rating.rating = form.rating.data
+        g.rating.notes = form.notes.data 
+        g.rating.date_entered = date
         db.session.add(g.rating)
         db.session.commit()
 
@@ -118,7 +134,6 @@ def wine_edit(id=None):
     form.year.data = wine.year
     form.country.data = wine.country
     form.description.data = wine.description
-    form.notes.data = wine.notes
     return render_template('wine_form.html',
                            title = "Edit wine",
                            page = 'wine_edit',
@@ -215,6 +230,22 @@ def wine_purchase_delete(id):
     flash('Purchase from '+purchase.store+' for $'+'{0:.2f}'.format(purchase.price)+' deleted.','success')
     return redirect(url_for('wine',id=purchase.wine_id))
 
+@app.route('/wine/rating/edit/<id>')
+@requires_authentication
+def wine_rating_edit(id=None):
+    rating = Rating.query.get(id)
+    form = RatingForm()
+    if form.validate_on_submit():
+        g.rating = Rating.query.filter_by(id = id).first()
+        g.rating.rating = form.rating.data
+        g.rating.notes = form.notes.data
+        g.sesion.add(g.rating)
+        db.session.commit()
+        flash('Rating Edited','success')
+    if not rating:
+        flash('No such rating', 'danger')
+        return redirect(url_for('index'))
+    
 
 @app.route('/autocomplete/store/')
 @requires_authentication
